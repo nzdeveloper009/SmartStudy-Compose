@@ -41,11 +41,36 @@ import com.syedzada.android.smartstudy.presentation.components.tasksList
 @Composable
 fun DashboardScreen() {
     val subjects = listOf(
-        Subject(name = "English", goalHours = 10f, colors = Subject.subjectCardColors[0]),
-        Subject(name = "Physics", goalHours = 10f, colors = Subject.subjectCardColors[1]),
-        Subject(name = "Maths", goalHours = 10f, colors = Subject.subjectCardColors[2]),
-        Subject(name = "Geology", goalHours = 10f, colors = Subject.subjectCardColors[3]),
-        Subject(name = "Fine Arts", goalHours = 10f, colors = Subject.subjectCardColors[0])
+        Subject(
+            name = "English",
+            goalHours = 10f,
+            colors = Subject.subjectCardColors[0],
+            subjectId = 0
+        ),
+        Subject(
+            name = "Physics",
+            goalHours = 10f,
+            colors = Subject.subjectCardColors[1],
+            subjectId = 0
+        ),
+        Subject(
+            name = "Maths",
+            goalHours = 10f,
+            colors = Subject.subjectCardColors[2],
+            subjectId = 0
+        ),
+        Subject(
+            name = "Geology",
+            goalHours = 10f,
+            colors = Subject.subjectCardColors[3],
+            subjectId = 0
+        ),
+        Subject(
+            name = "Fine Arts",
+            goalHours = 10f,
+            colors = Subject.subjectCardColors[0],
+            subjectId = 0
+        )
     )
 
     val tasks = listOf(
@@ -53,9 +78,11 @@ fun DashboardScreen() {
             title = "Prepare notes",
             description = "",
             dueDate = 0L,
-            priority = 1,
+            priority = 0,
             relatedToSubject = "",
-            isComplete = false
+            isComplete = false,
+            taskSubjectId = 0,
+            taskId = 1
         ),
         Task(
             title = "Do Homework",
@@ -63,15 +90,19 @@ fun DashboardScreen() {
             dueDate = 0L,
             priority = 1,
             relatedToSubject = "",
-            isComplete = true
+            isComplete = true,
+            taskSubjectId = 0,
+            taskId = 1
         ),
         Task(
             title = "Go Coaching",
             description = "",
             dueDate = 0L,
-            priority = 1,
+            priority = 2,
             relatedToSubject = "",
-            isComplete = false
+            isComplete = false,
+            taskSubjectId = 0,
+            taskId = 1
         ),
         Task(
             title = "Assignment",
@@ -79,15 +110,19 @@ fun DashboardScreen() {
             dueDate = 0L,
             priority = 1,
             relatedToSubject = "",
-            isComplete = false
+            isComplete = false,
+            taskSubjectId = 0,
+            taskId = 1
         ),
         Task(
             title = "Write Poem",
             description = "",
             dueDate = 0L,
-            priority = 1,
+            priority = 0,
             relatedToSubject = "",
-            isComplete = true
+            isComplete = true,
+            taskSubjectId = 0,
+            taskId = 1
         )
     )
 
@@ -129,7 +164,9 @@ fun DashboardScreen() {
                 sectionTitle = "UP COMING TASKS",
                 emptyListText = "You don't have any recent study sessions.\n " +
                         "Start a study session to begin recording your progress.",
-                tasks = tasks
+                tasks = tasks,
+                onCheckBoxClick = {},
+                onTaskCardClick = {}
             )
         }
     }
