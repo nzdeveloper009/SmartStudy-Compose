@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,6 +26,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,40 +37,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.syedzada.android.smartstudy.R
+import com.syedzada.android.smartstudy.domain.model.Session
 import com.syedzada.android.smartstudy.domain.model.Subject
 import com.syedzada.android.smartstudy.domain.model.Task
+import com.syedzada.android.smartstudy.presentation.components.AddSubjectDialog
 import com.syedzada.android.smartstudy.presentation.components.CountCard
 import com.syedzada.android.smartstudy.presentation.components.SubjectCard
+import com.syedzada.android.smartstudy.presentation.components.studySessionList
 import com.syedzada.android.smartstudy.presentation.components.tasksList
 
 @Composable
 fun DashboardScreen() {
     val subjects = listOf(
         Subject(
-            name = "English",
-            goalHours = 10f,
-            colors = Subject.subjectCardColors[0],
-            subjectId = 0
-        ),
-        Subject(
-            name = "Physics",
-            goalHours = 10f,
-            colors = Subject.subjectCardColors[1],
-            subjectId = 0
-        ),
-        Subject(
-            name = "Maths",
-            goalHours = 10f,
-            colors = Subject.subjectCardColors[2],
-            subjectId = 0
-        ),
-        Subject(
-            name = "Geology",
-            goalHours = 10f,
-            colors = Subject.subjectCardColors[3],
-            subjectId = 0
-        ),
-        Subject(
+            name = "English", goalHours = 10f, colors = Subject.subjectCardColors[0], subjectId = 0
+        ), Subject(
+            name = "Physics", goalHours = 10f, colors = Subject.subjectCardColors[1], subjectId = 0
+        ), Subject(
+            name = "Maths", goalHours = 10f, colors = Subject.subjectCardColors[2], subjectId = 0
+        ), Subject(
+            name = "Geology", goalHours = 10f, colors = Subject.subjectCardColors[3], subjectId = 0
+        ), Subject(
             name = "Fine Arts",
             goalHours = 10f,
             colors = Subject.subjectCardColors[0],
@@ -83,8 +75,7 @@ fun DashboardScreen() {
             isComplete = false,
             taskSubjectId = 0,
             taskId = 1
-        ),
-        Task(
+        ), Task(
             title = "Do Homework",
             description = "",
             dueDate = 0L,
@@ -93,8 +84,7 @@ fun DashboardScreen() {
             isComplete = true,
             taskSubjectId = 0,
             taskId = 1
-        ),
-        Task(
+        ), Task(
             title = "Go Coaching",
             description = "",
             dueDate = 0L,
@@ -103,8 +93,7 @@ fun DashboardScreen() {
             isComplete = false,
             taskSubjectId = 0,
             taskId = 1
-        ),
-        Task(
+        ), Task(
             title = "Assignment",
             description = "",
             dueDate = 0L,
@@ -113,8 +102,7 @@ fun DashboardScreen() {
             isComplete = false,
             taskSubjectId = 0,
             taskId = 1
-        ),
-        Task(
+        ), Task(
             title = "Write Poem",
             description = "",
             dueDate = 0L,
@@ -126,9 +114,52 @@ fun DashboardScreen() {
         )
     )
 
-    Scaffold(
-        topBar = { DashboardScreenTopBar() }
-    ) { paddingValues ->
+    val sessions = listOf(
+        Session(
+            relatedToSubject = "English",
+            date = 0L,
+            duration = 2,
+            sessionSubjectId = 0,
+            sessionId = 0
+        ),
+        Session(
+            relatedToSubject = "Physics",
+            date = 0L,
+            duration = 2,
+            sessionSubjectId = 0,
+            sessionId = 0
+        ),
+        Session(
+            relatedToSubject = "Maths", date = 0L, duration = 2, sessionSubjectId = 0, sessionId = 0
+        ),
+        Session(
+            relatedToSubject = "Geology",
+            date = 0L,
+            duration = 2,
+            sessionSubjectId = 0,
+            sessionId = 0
+        ),
+        Session(
+            relatedToSubject = "Fine Arts",
+            date = 0L,
+            duration = 2,
+            sessionSubjectId = 0,
+            sessionId = 0
+        ),
+    )
+
+
+    var isAddSubjectDialogOpen by rememberSaveable { mutableStateOf(false) }
+
+    AddSubjectDialog(
+        isOpen = isAddSubjectDialogOpen,
+        onDismissRequest = { isAddSubjectDialogOpen = false },
+        onConfirmButtonClick = {
+            isAddSubjectDialogOpen = false
+        }
+    )
+
+    Scaffold(topBar = { DashboardScreenTopBar() }) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -147,7 +178,10 @@ fun DashboardScreen() {
             item {
                 SubjectCardsSection(
                     modifier = Modifier.fillMaxWidth(),
-                    subjectList = subjects
+                    subjectList = subjects,
+                    onAddIconClicked = {
+                        isAddSubjectDialogOpen = true
+                    }
                 )
             }
             item {
@@ -160,14 +194,19 @@ fun DashboardScreen() {
                     Text(text = "Start Study Session")
                 }
             }
-            tasksList(
-                sectionTitle = "UP COMING TASKS",
-                emptyListText = "You don't have any recent study sessions.\n " +
-                        "Start a study session to begin recording your progress.",
+            tasksList(sectionTitle = "UP COMING TASKS",
+                emptyListText = "You don't have any up coming tasks.\n " + "Click the + button in subject screen to add new task",
                 tasks = tasks,
                 onCheckBoxClick = {},
-                onTaskCardClick = {}
-            )
+                onTaskCardClick = {})
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+            studySessionList(sectionTitle = "RECENT STUDY SESSIONS",
+                emptyListText = "You don't have any recent study sessions.\n " + "Start a study session to begin recording your progress.",
+//                sessions = emptyList(),
+                sessions = sessions,
+                onDeleteIconClick = {})
         }
     }
 }
@@ -175,40 +214,28 @@ fun DashboardScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DashboardScreenTopBar() {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "StudySmart",
-                style = MaterialTheme.typography.headlineMedium
-            )
-        }
-    )
+    CenterAlignedTopAppBar(title = {
+        Text(
+            text = "StudySmart", style = MaterialTheme.typography.headlineMedium
+        )
+    })
 }
 
 @Composable
 private fun CountCardsSection(
-    modifier: Modifier,
-    subjectCount: Int,
-    studiedHours: String,
-    goalHours: String
+    modifier: Modifier, subjectCount: Int, studiedHours: String, goalHours: String
 ) {
     Row(modifier = modifier) {
         CountCard(
-            modifier = Modifier.weight(1f),
-            headingText = "Subject Count",
-            count = "$subjectCount"
+            modifier = Modifier.weight(1f), headingText = "Subject Count", count = "$subjectCount"
         )
         Spacer(modifier = Modifier.width(10.dp))
         CountCard(
-            modifier = Modifier.weight(1f),
-            headingText = "Studied Hours",
-            count = studiedHours
+            modifier = Modifier.weight(1f), headingText = "Studied Hours", count = studiedHours
         )
         Spacer(modifier = Modifier.width(10.dp))
         CountCard(
-            modifier = Modifier.weight(1f),
-            headingText = "Goal Study Hours",
-            count = goalHours
+            modifier = Modifier.weight(1f), headingText = "Goal Study Hours", count = goalHours
         )
     }
 }
@@ -218,6 +245,7 @@ private fun SubjectCardsSection(
     modifier: Modifier,
     subjectList: List<Subject>,
     emptyListText: String = "You don't have any subjects.\n Click the + button to add new subject.",
+    onAddIconClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -232,10 +260,9 @@ private fun SubjectCardsSection(
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(start = 12.dp)
             )
-            IconButton(onClick = { }) {
+            IconButton(onClick = onAddIconClicked) {
                 Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Subject"
+                    imageVector = Icons.Default.Add, contentDescription = "Add Subject"
                 )
             }
         }
@@ -261,8 +288,7 @@ private fun SubjectCardsSection(
             contentPadding = PaddingValues(start = 12.dp, end = 12.dp)
         ) {
             items(subjectList) { subject ->
-                SubjectCard(
-                    subjectName = subject.name,
+                SubjectCard(subjectName = subject.name,
                     gradientColors = subject.colors,
                     onClick = {})
             }
